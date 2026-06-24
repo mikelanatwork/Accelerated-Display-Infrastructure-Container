@@ -1,4 +1,4 @@
-# Acclerated Display Infrastructure Container
+# Accelerated Display Infrastructure Container
 
 This workspace builds an Ubuntu 24.04 CUDA desktop container with two access paths:
 
