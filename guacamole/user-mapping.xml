@@ -1,0 +1,19 @@
+<user-mapping>
+  <authorize username="ereshkigal" password="ereshkigal">
+    <connection name="Ubuntu Desktop">
+      <protocol>rdp</protocol>
+      <param name="hostname">ereshkigal</param>
+      <param name="port">3389</param>
+      <param name="username">ereshkigal</param>
+      <param name="password">ereshkigal</param>
+      <param name="security">any</param>
+      <param name="ignore-cert">true</param>
+      <param name="color-depth">24</param>
+      <param name="enable-wallpaper">true</param>
+      <param name="enable-full-window-drag">false</param>
+      <param name="enable-desktop-composition">false</param>
+      <param name="enable-menu-animations">false</param>
+      <param name="resize-method">display-update</param>
+    </connection>
+  </authorize>
+</user-mapping>

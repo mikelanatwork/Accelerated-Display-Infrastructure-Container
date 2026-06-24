@@ -1,0 +1,16 @@
+# Local editor state
+.vscode/
+
+# Build and runtime logs
+*.log
+build-*.log
+
+# Container bind-mounted home/runtime state
+home/*
+!home/.gitkeep
+
+# Local secrets and overrides
+.env
+*.pem
+*.key
+id_*

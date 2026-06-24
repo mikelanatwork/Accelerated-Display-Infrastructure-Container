@@ -1,0 +1,61 @@
+# Optional host-display mode for WSLg.
+# Run this from inside a WSL2 distro with WSLg available, not from plain Windows PowerShell.
+services:
+  ereshkigal-host-display:
+    profiles:
+      - host-display
+    build:
+      context: .
+      args:
+        USERNAME: ereshkigal
+        PASSWORD: ereshkigal
+
+    command:
+      - /bin/bash
+      - -lc
+      - install -d -m 700 -o ereshkigal -g ereshkigal /tmp/runtime-ereshkigal && /usr/local/bin/prepare-container-user.sh && /usr/local/bin/start-sshd.sh && tail -f /dev/null
+
+    ports:
+      - "127.0.0.1:2222:22"
+
+    volumes:
+      - ./home:/home/ereshkigal
+      - ereshkigal-host-cache:/home/ereshkigal/.cache
+      - ereshkigal-host-config:/home/ereshkigal/.config
+      - ereshkigal-host-local-share:/home/ereshkigal/.local/share
+      - ereshkigal-host-local-state:/home/ereshkigal/.local/state
+      - ereshkigal-host-vscode-server:/home/ereshkigal/.vscode-server
+      - /mnt/wslg:/mnt/wslg
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /usr/lib/wsl:/usr/lib/wsl:ro
+
+    devices:
+      - /dev/dxg:/dev/dxg
+
+    gpus: all
+    environment:
+      CONTAINER_USER: ereshkigal
+      DISPLAY: ${DISPLAY}
+      XDG_RUNTIME_DIR: /tmp/runtime-ereshkigal
+      PULSE_SERVER: unix:/mnt/wslg/PulseServer
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      GDK_BACKEND: x11
+      QT_QPA_PLATFORM: xcb
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
+      LD_LIBRARY_PATH: /usr/lib/wsl/lib:/usr/local/cuda/lib64
+      LIBGL_ALWAYS_INDIRECT: "0"
+      MESA_LOADER_DRIVER_OVERRIDE: d3d12
+      GALLIUM_DRIVER: d3d12
+      MESA_D3D12_DEFAULT_ADAPTER_NAME: NVIDIA
+
+    shm_size: "8gb"
+    restart: unless-stopped
+
+volumes:
+  ereshkigal-host-cache:
+  ereshkigal-host-config:
+  ereshkigal-host-local-share:
+  ereshkigal-host-local-state:
+  ereshkigal-host-vscode-server:

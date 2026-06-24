@@ -1,0 +1,61 @@
+services:
+  ereshkigal:
+    build:
+      context: .
+      args:
+        # 👤 Set the RDP login credentials
+        USERNAME: ereshkigal
+        PASSWORD: ereshkigal
+
+    # 🚪 Map the RDP port to your host
+    # Change the left side to any free port, e.g. "3390:3389"
+    ports:
+      - "8888:3389"
+
+    # 💾 Persist the user's home folder so data survives container restarts
+    volumes:
+      - ./home:/home/ereshkigal
+      # Keep GNOME's high-churn state off the Windows bind mount for responsiveness.
+      - ereshkigal-cache:/home/ereshkigal/.cache
+      - ereshkigal-config:/home/ereshkigal/.config
+      - ereshkigal-local-share:/home/ereshkigal/.local/share
+      - ereshkigal-local-state:/home/ereshkigal/.local/state
+      # Remote-SSH extracts archives here; Docker volumes support Linux permissions/timestamps.
+      - ereshkigal-vscode-server:/home/ereshkigal/.vscode-server
+
+    # Requires the host NVIDIA driver plus NVIDIA Container Toolkit / Docker GPU support.
+    gpus: all
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
+
+    # Increase shared memory for X11 (prevents some graphical issues)
+    shm_size: "8gb"
+
+    restart: unless-stopped
+
+  guacd:
+    image: guacamole/guacd:1.5.5
+    restart: unless-stopped
+
+  guacamole:
+    image: guacamole/guacamole:1.5.5
+    depends_on:
+      - ereshkigal
+      - guacd
+    environment:
+      GUACAMOLE_HOME: /etc/guacamole
+      GUACD_HOSTNAME: guacd
+      GUACD_PORT: 4822
+    volumes:
+      - ./guacamole:/etc/guacamole
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  ereshkigal-cache:
+  ereshkigal-config:
+  ereshkigal-local-share:
+  ereshkigal-local-state:
+  ereshkigal-vscode-server:
